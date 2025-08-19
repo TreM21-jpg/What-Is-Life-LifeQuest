@@ -1,5 +1,3 @@
-import logo from './logo.svg';
-import './App.css';
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -14,6 +12,7 @@ export default function App() {
       {stage === "home" && (
         <div className="grid gap-6 max-w-xl mx-auto">
           <h1 className="text-3xl font-bold text-center mb-4">🌱 What Is Life?</h1>
+
           <Card onClick={() => setStage("elementary")} className="cursor-pointer">
             <CardHeader>
               <CardTitle>🧒 Elementary Stage</CardTitle>
@@ -80,5 +79,3 @@ function StagePage({ title, description, goHome }) {
   );
 }
 
-
-export default App;
