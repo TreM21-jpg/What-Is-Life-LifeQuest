@@ -79,3 +79,4 @@ function StagePage({ title, description, goHome }) {
   );
 }
 
+export default App;
