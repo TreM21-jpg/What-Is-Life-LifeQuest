@@ -1,6 +1,4 @@
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function App() {
   const [stage, setStage] = useState("home");
@@ -13,32 +11,29 @@ export default function App() {
         <div className="grid gap-6 max-w-xl mx-auto">
           <h1 className="text-3xl font-bold text-center mb-4">🌱 What Is Life?</h1>
 
-          <Card onClick={() => setStage("elementary")} className="cursor-pointer">
-            <CardHeader>
-              <CardTitle>🧒 Elementary Stage</CardTitle>
-            </CardHeader>
-            <CardContent>
-              Helping Yourself Helps the Team
-            </CardContent>
-          </Card>
+          <div
+            onClick={() => setStage("elementary")}
+            className="cursor-pointer bg-white rounded-2xl shadow p-4"
+          >
+            <h2 className="font-semibold">🧒 Elementary Stage</h2>
+            <p>Helping Yourself Helps the Team</p>
+          </div>
 
-          <Card onClick={() => setStage("middle")} className="cursor-pointer">
-            <CardHeader>
-              <CardTitle>🧑‍🤝‍🧑 Middle School Stage</CardTitle>
-            </CardHeader>
-            <CardContent>
-              Mental Health & High School Readiness
-            </CardContent>
-          </Card>
+          <div
+            onClick={() => setStage("middle")}
+            className="cursor-pointer bg-white rounded-2xl shadow p-4"
+          >
+            <h2 className="font-semibold">🧑‍🤝‍🧑 Middle School Stage</h2>
+            <p>Mental Health & High School Readiness</p>
+          </div>
 
-          <Card onClick={() => setStage("high")} className="cursor-pointer">
-            <CardHeader>
-              <CardTitle>🎓 High School Stage</CardTitle>
-            </CardHeader>
-            <CardContent>
-              Milestones in Life
-            </CardContent>
-          </Card>
+          <div
+            onClick={() => setStage("high")}
+            className="cursor-pointer bg-white rounded-2xl shadow p-4"
+          >
+            <h2 className="font-semibold">🎓 High School Stage</h2>
+            <p>Milestones in Life</p>
+          </div>
         </div>
       )}
 
@@ -71,10 +66,15 @@ export default function App() {
 
 function StagePage({ title, description, goHome }) {
   return (
-    <div className="max-w-lg mx-auto text-center">
+    <div className="max-w-lg mx-auto text-center bg-white rounded-2xl shadow p-6">
       <h2 className="text-2xl font-bold mb-2">{title}</h2>
       <p className="mb-6">{description}</p>
-      <Button onClick={goHome} className="mt-4">⬅ Back Home</Button>
+      <button
+        onClick={goHome}
+        className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
+      >
+        ⬅ Back Home
+      </button>
     </div>
   );
 }
