@@ -1,70 +1,27 @@
-# Getting Started with Create React App
+# LifeQuest
+*A Gamified Journey Through School*
+# LifeQuest 🎮✨
+*A Gamified Journey Through School*
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## 🌟 Project Vision
+LifeQuest is an interactive web app that guides students through the stages of school (elementary, middle, and high school) using mini-games, journaling prompts, and reflection challenges. The purpose is to help students see school as a meaningful journey and reflect on their growth.
 
-## Available Scripts
+## 🎯 SMART Goals
+1. **Specific** – Create a web app with 3 stages (elementary, middle, high school). Each stage will contain 1 mini-game and 1 journaling/reflection prompt.  
+2. **Measurable** – By December, the app will include at least 3 mini-games, 3 journaling prompts, and a badge/progress system.  
+3. **Achievable** – Use React (front-end), GitHub (version control), and Netlify (hosting). Focus on simple mini-games.  
+4. **Relevant** – Supports student growth by combining learning, reflection, and gamification.  
+5. **Time-bound** – Prototype finished by **December 5, 2025** (Capstone Showcase).  
 
-In the project directory, you can run:
+## 🛠️ Tech Stack
+- React (Frontend)  
+- GitHub (Version Control)  
+- Netlify (Hosting/Deployment)  
 
-### `npm start`
+## 🚀 Roadmap
+- [ ] Stage 1: Elementary mini-game + reflection  
+- [ ] Stage 2: Middle School mini-game + reflection  
+- [ ] Stage 3: High School mini-game + reflection  
+- [ ] Add progress system + badges  
+- [ ] Final polish & presentation prep  
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
-
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
