@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-export default function App() {
+function App() {
   const [stage, setStage] = useState("home");
 
   const goHome = () => setStage("home");
