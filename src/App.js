@@ -1,8 +1,8 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
-import Elementary from "./components/Elementary";
-import MiddleSchool from "./components/MiddleSchool";
-import HighSchool from "./components/HighSchool";
+import Elementary from "./components/ElementaryStage";
+import MiddleSchool from "./components/MiddleSchoolStage";
+import HighSchool from "./components/HighSchoolStage";
 
 function App() {
   return (
