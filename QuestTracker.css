@@ -1,0 +1,29 @@
+.quest-tracker {
+  background: #f0f4f8;
+  padding: 15px;
+  border-radius: 8px;
+  margin-top: 20px;
+}
+
+.quest {
+  margin-bottom: 15px;
+  padding: 10px;
+  border-left: 4px solid #2196f3;
+  background: #ffffff;
+  border-radius: 6px;
+}
+
+.quest.done {
+  opacity: 0.6;
+  text-decoration: line-through;
+}
+
+.quest button {
+  margin-top: 5px;
+  padding: 6px 12px;
+  background-color: #2196f3;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
