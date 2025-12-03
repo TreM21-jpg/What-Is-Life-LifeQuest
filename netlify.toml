@@ -2,7 +2,21 @@
   command = "npm run build"
   publish = "build"
 
+# ✅ Redirect all routes to index.html for SPA support
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
+
+# ✅ Optional: set environment variables for Netlify
+[context.production.environment]
+  NODE_ENV = "production"
+  REACT_APP_API_URL = "https://lifequest.onrender.com/api"
+
+# ✅ Optional: headers for caching and security
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000"
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
