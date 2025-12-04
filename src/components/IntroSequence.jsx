@@ -4,14 +4,11 @@ export default function IntroSequence({ onFinish }) {
   const timerRef = useRef(null);
 
   useEffect(() => {
-    // Start intro timer
     timerRef.current = setTimeout(() => {
-      onFinish && onFinish();
-    }, 3000);
+      if (onFinish) onFinish();
+    }, 2000);
 
-    // ✅ Copy ref into local variable for cleanup
-    const timer = timerRef.current;
-    return () => clearTimeout(timer);
+    return () => clearTimeout(timerRef.current);
   }, [onFinish]);
 
   return (
@@ -21,10 +18,10 @@ export default function IntroSequence({ onFinish }) {
       display: "flex", alignItems: "center", justifyContent: "center",
       fontFamily: "'Orbitron', sans-serif",
       color: "#00ffff",
-      fontSize: "48px",
+      fontSize: "42px",
       textShadow: "0 0 12px #00ffff"
     }}>
-      🌟 Welcome to LifeQuest
+      🚀 Welcome to LifeQuest!
     </div>
   );
 }

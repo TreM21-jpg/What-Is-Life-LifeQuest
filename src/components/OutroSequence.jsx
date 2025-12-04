@@ -4,14 +4,11 @@ export default function OutroSequence({ onFinish }) {
   const timerRef = useRef(null);
 
   useEffect(() => {
-    // Start outro timer
     timerRef.current = setTimeout(() => {
-      onFinish && onFinish();
+      if (onFinish) onFinish();
     }, 2000);
 
-    // ✅ Copy ref into local variable for cleanup
-    const timer = timerRef.current;
-    return () => clearTimeout(timer);
+    return () => clearTimeout(timerRef.current);
   }, [onFinish]);
 
   return (
