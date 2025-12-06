@@ -1,47 +1,68 @@
-import { useState } from "react";
+// MiddleSchoolStage.js
+import React from "react";
+import QuestTracker from "./QuestTracker";
+import { generateLifeMirrorChoices } from "./lifeMirror";
+import { useProgress } from "./useProgress";
 
 export default function MiddleSchoolStage() {
-  const [stage, setStage] = useState("start");
-  const [message, setMessage] = useState("");
+  const {
+    xp,
+    setXp,
+    inventory,
+    setInventory,
+    selectedPath,
+    setSelectedPath,
+  } = useProgress("MiddleSchool");
 
-  const handleChoice = (choice) => {
-    if (choice === "talk") {
-      setMessage("You talked to your teacher and learned from your mistakes — progress matters more than perfection!");
-      setStage("end");
-    } else if (choice === "hide") {
-      setMessage("You hid your test results and felt stressed. Honesty helps you grow stronger!");
-      setStage("end");
+  const quests = [
+    {
+      id: "friendshipBridge",
+      title: "Build the Friendship Bridge",
+      description: "Team up with another player to build a bridge.",
+      xp: 100,
+      item: "Bridge Token",
+      completed: false,
+    },
+    {
+      id: "emotionMaze",
+      title: "Navigate the Emotion Maze",
+      description: "Use emotional clues to find your way.",
+      xp: 150,
+      item: "Emotion Compass",
+      completed: false,
+    },
+  ];
+
+  const handleQuestComplete = (questId) => {
+    const quest = quests.find((q) => q.id === questId);
+    if (quest && !quest.completed) {
+      setXp((prev) => prev + quest.xp);
+      setInventory((prev) => [...prev, quest.item]);
+      quest.completed = true;
     }
   };
 
+  const lifeChoices = generateLifeMirrorChoices("MiddleSchool");
+
   return (
-    <div className="p-6 text-center">
-      <h1 className="text-3xl font-bold mb-4">🧑‍🤝‍🧑 Middle School Stage</h1>
-      {stage === "start" ? (
-        <>
-          <p className="mb-6 text-lg">You failed your math test. What do you do next?</p>
-          <div className="flex justify-center gap-4">
-            <button
-              onClick={() => handleChoice("talk")}
-              className="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600"
-            >
-              Talk to Teacher 📘
-            </button>
-            <button
-              onClick={() => handleChoice("hide")}
-              className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
-            >
-              Hide It 😶
-            </button>
+    <div className="stage">
+      <h2>⚡ Middle School Stage</h2>
+      <p><strong>XP:</strong> {xp}</p>
+      <p><strong>Inventory:</strong> {inventory.join(", ") || "Empty"}</p>
+
+      <QuestTracker initialQuests={quests} onComplete={handleQuestComplete} />
+
+      <div className="life-mirror">
+        <h3>🪞 Life Mirror Choices</h3>
+        {lifeChoices.map((choice) => (
+          <div key={choice.id}>
+            <strong>{choice.title}</strong>
+            <p>{choice.impact}</p>
+            <button onClick={() => setSelectedPath(choice.title)}>Choose Path</button>
           </div>
-        </>
-      ) : (
-        <p className="text-lg mt-6">{message}</p>
-      )}
+        ))}
+        {selectedPath && <p>You chose: <strong>{selectedPath}</strong></p>}
+      </div>
     </div>
   );
 }
-<div className="mt-10 border-t pt-4">
-  <h2 className="text-xl font-semibold mb-2">💬 Side Quest Chat</h2>
-  <p className="text-gray-600">Ask LifeQuest AI for advice or side missions (coming soon!)</p>
-</div>

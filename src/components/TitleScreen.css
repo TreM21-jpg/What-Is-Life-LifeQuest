@@ -1,0 +1,36 @@
+.title-screen {
+  height: 100vh;
+  background: linear-gradient(to bottom, #e0f7fa, #fff);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 2s ease-in;
+}
+
+.logo h1 {
+  font-size: 3em;
+  color: #4caf50;
+  text-shadow: 2px 2px #a5d6a7;
+}
+
+.subtitle {
+  font-size: 1.2em;
+  color: #555;
+  margin-bottom: 30px;
+}
+
+.start-button {
+  padding: 12px 24px;
+  font-size: 1em;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}

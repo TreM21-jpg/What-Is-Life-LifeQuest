@@ -1,27 +1,26 @@
-# LifeQuest
-*A Gamified Journey Through School*
-# LifeQuest 🎮✨
-*A Gamified Journey Through School*
+# 🌳 LifeQuest – The Interactive Life RPG
 
-## 🌟 Project Vision
-LifeQuest is an interactive web app that guides students through the stages of school (elementary, middle, and high school) using mini-games, journaling prompts, and reflection challenges. The purpose is to help students see school as a meaningful journey and reflect on their growth.
+LifeQuest is a 3D open-world RPG where players grow through real-life inspired stages — Elementary, Middle School, and High School/Adult — each filled with interactive missions, life lessons, and self-discovery.
 
-## 🎯 SMART Goals
-1. **Specific** – Create a web app with 3 stages (elementary, middle, high school). Each stage will contain 1 mini-game and 1 journaling/reflection prompt.  
-2. **Measurable** – By December, the app will include at least 3 mini-games, 3 journaling prompts, and a badge/progress system.  
-3. **Achievable** – Use React (front-end), GitHub (version control), and Netlify (hosting). Focus on simple mini-games.  
-4. **Relevant** – Supports student growth by combining learning, reflection, and gamification.  
-5. **Time-bound** – Prototype finished by **December 5, 2025** (Capstone Showcase).  
+## 🎮 Features
 
-## 🛠️ Tech Stack
-- React (Frontend)  
-- GitHub (Version Control)  
-- Netlify (Hosting/Deployment)  
+- 🌎 Open-world exploration across life stages
+- 🧠 AI life companion with animated chat
+- 👥 Multiplayer rooms and live chat
+- 🧍 Avatar customization and evolution
+- 📜 Quest tracker, XP leveling, and inventory
+- 🪞 Life Mirror choices that shape your path
 
-## 🚀 Roadmap
-- [ ] Stage 1: Elementary mini-game + reflection  
-- [ ] Stage 2: Middle School mini-game + reflection  
-- [ ] Stage 3: High School mini-game + reflection  
-- [ ] Add progress system + badges  
-- [ ] Final polish & presentation prep  
+## 🧰 Tech Stack
+
+- **Frontend**: React, Three.js, @react-three/fiber, @react-three/drei
+- **Backend**: Node.js, Express, Socket.io (optional)
+- **AI**: OpenAI API or custom NLP (planned)
+- **Hosting**: Netlify (frontend), Render/Railway (backend)
+
+## 🚀 Getting Started
+
+```bash
+npm install
+npm start
 
