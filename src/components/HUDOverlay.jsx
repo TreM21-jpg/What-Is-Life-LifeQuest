@@ -4,6 +4,7 @@ import Inventory from "./Inventory";
 import QuestTrackerHUD from "./QuestTrackerHUD";
 import Minimap from "./Minimap";
 import AIChatBox from "./AIChatBox";
+import StreakDisplay from "./StreakDisplay";
 
 export default function HUDOverlay({
   playerHP,
@@ -82,6 +83,11 @@ export default function HUDOverlay({
       {/* Minimap (bottom-right) */}
       <div style={{ position: "absolute", bottom: "20px", right: "20px", pointerEvents: "auto" }}>
         <Minimap playerPosition={playerPosition} />
+      </div>
+
+      {/* Streak Display (top-right, above quest tracker) */}
+      <div style={{ position: "absolute", top: "20px", right: "320px", pointerEvents: "auto" }}>
+        <StreakDisplay position="inline" compact={true} />
       </div>
 
       {/* AI Chat Modal */}

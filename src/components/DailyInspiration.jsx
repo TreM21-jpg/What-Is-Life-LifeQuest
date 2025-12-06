@@ -1,32 +1,54 @@
 /**
  * Daily Inspiration Tile – Shows motivational quote in the Hub
  * Updates visually with neon styling and celebrates the player's journey
+ * Now includes streak tracking and achievement milestones
  */
 
 import React, { useState, useEffect } from "react";
 import { getRandomQuote } from "./InspiringQuotes";
+import { recordInspiration, getStreakData, getStreakMilestone, getStreakMessage } from "./StreakTracker.ts";
+import { triggerFeedback } from "./HapticAudioFeedback";
 
 export default function DailyInspiration() {
   const [quote, setQuote] = useState(null);
   const [refreshCount, setRefreshCount] = useState(0);
+  const [streakData, setStreakData] = useState(null);
+  const [newMilestone, setNewMilestone] = useState(false);
 
   useEffect(() => {
     const selectedQuote = getRandomQuote();
     setQuote(selectedQuote);
+
+    // Record inspiration and get streak data
+    const streak = recordInspiration();
+    setStreakData(streak);
+
+    // Check if this is a new milestone
+    const milestones = [1, 3, 7, 14, 30, 50, 100];
+    if (milestones.includes(streak.currentStreak)) {
+      setNewMilestone(true);
+      triggerFeedback("achievement");
+    }
   }, []);
 
   const handleRefresh = () => {
     const selectedQuote = getRandomQuote();
     setQuote(selectedQuote);
     setRefreshCount((prev) => prev + 1);
+    triggerFeedback("button");
   };
 
-  if (!quote) return null;
+  if (!quote || !streakData) return null;
+
+  const milestone = getStreakMilestone(streakData.currentStreak);
+  const streakMessage = getStreakMessage(streakData.currentStreak);
 
   return (
     <div
       style={{
-        background: "linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(255, 0, 102, 0.05))",
+        background: newMilestone 
+          ? "linear-gradient(135deg, rgba(255, 0, 102, 0.15), rgba(0, 212, 255, 0.15))"
+          : "linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(255, 0, 102, 0.05))",
         border: "2px solid",
         borderImage: "linear-gradient(135deg, #00d4ff, #ff0066) 1",
         borderRadius: "16px",
@@ -34,20 +56,47 @@ export default function DailyInspiration() {
         maxWidth: "500px",
         margin: "20px auto",
         textAlign: "center",
-        boxShadow: "0 0 30px rgba(0, 212, 255, 0.2), inset 0 0 20px rgba(0, 212, 255, 0.1)",
+        boxShadow: newMilestone
+          ? "0 0 40px rgba(255, 0, 102, 0.3), inset 0 0 20px rgba(255, 0, 102, 0.1)"
+          : "0 0 30px rgba(0, 212, 255, 0.2), inset 0 0 20px rgba(0, 212, 255, 0.1)",
         transition: "all 0.4s ease",
       }}
       onMouseEnter={(e) => {
-        e.currentTarget.style.boxShadow =
-          "0 0 40px rgba(0, 212, 255, 0.4), inset 0 0 30px rgba(0, 212, 255, 0.15)";
+        e.currentTarget.style.boxShadow = newMilestone
+          ? "0 0 50px rgba(255, 0, 102, 0.4), inset 0 0 30px rgba(255, 0, 102, 0.15)"
+          : "0 0 40px rgba(0, 212, 255, 0.4), inset 0 0 30px rgba(0, 212, 255, 0.15)";
         e.currentTarget.style.transform = "translateY(-4px)";
       }}
       onMouseLeave={(e) => {
-        e.currentTarget.style.boxShadow =
-          "0 0 30px rgba(0, 212, 255, 0.2), inset 0 0 20px rgba(0, 212, 255, 0.1)";
+        e.currentTarget.style.boxShadow = newMilestone
+          ? "0 0 40px rgba(255, 0, 102, 0.3), inset 0 0 20px rgba(255, 0, 102, 0.1)"
+          : "0 0 30px rgba(0, 212, 255, 0.2), inset 0 0 20px rgba(0, 212, 255, 0.1)";
         e.currentTarget.style.transform = "translateY(0)";
       }}
     >
+      {/* Milestone notification */}
+      {newMilestone && (
+        <div style={{
+          background: "rgba(255, 0, 102, 0.2)",
+          border: "1px solid #ff0066",
+          borderRadius: "8px",
+          padding: "12px",
+          marginBottom: "16px",
+          animation: "pulse 0.6s ease-out"
+        }}>
+          <p style={{
+            color: "#ff0066",
+            fontSize: "14px",
+            fontWeight: "600",
+            margin: 0,
+            textTransform: "uppercase",
+            letterSpacing: "1px"
+          }}>
+            🎯 Milestone Unlocked! {milestone}
+          </p>
+        </div>
+      )}
+
       {/* Icon */}
       <div style={{ fontSize: "40px", marginBottom: "12px" }}>{quote.icon}</div>
 
@@ -96,6 +145,39 @@ export default function DailyInspiration() {
         — {quote.author}
       </p>
 
+      {/* Streak display */}
+      <div style={{
+        background: "rgba(0, 212, 255, 0.1)",
+        border: "1px solid rgba(0, 212, 255, 0.3)",
+        borderRadius: "8px",
+        padding: "12px",
+        marginBottom: "16px"
+      }}>
+        <p style={{
+          color: "#00d4ff",
+          fontSize: "14px",
+          margin: "0 0 8px 0",
+          fontWeight: "600"
+        }}>
+          🔥 Current Streak: {streakData.currentStreak} days
+        </p>
+        <p style={{
+          color: "#0099ff",
+          fontSize: "12px",
+          margin: 0,
+          fontStyle: "italic"
+        }}>
+          {streakMessage}
+        </p>
+        <p style={{
+          color: "rgba(0, 212, 255, 0.7)",
+          fontSize: "11px",
+          margin: "4px 0 0 0"
+        }}>
+          Longest: {streakData.longestStreak} days | Total: {streakData.allTimeInspirations}
+        </p>
+      </div>
+
       {/* Refresh button */}
       <button
         onClick={handleRefresh}
@@ -138,9 +220,14 @@ export default function DailyInspiration() {
       )}
 
       <style>{`
+        @keyframes pulse {
+          0% { transform: scale(0.95); opacity: 0; }
+          100% { transform: scale(1); opacity: 1; }
+        }
         @media (prefers-reduced-motion: reduce) {
           div {
             transition: none !important;
+            animation: none !important;
           }
         }
       `}</style>

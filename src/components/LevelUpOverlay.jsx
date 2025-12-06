@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { QuoteNotification } from "./QuoteDisplay.jsx";
+import { triggerFeedback } from "./HapticAudioFeedback";
 
 export default function LevelUpOverlay({ newLevel, onFinish }) {
   const [visible, setVisible] = useState(true);
   const [showQuote, setShowQuote] = useState(true);
 
   useEffect(() => {
+    // Trigger haptic + audio feedback on mount
+    triggerFeedback("levelup");
+
     const timer = setTimeout(() => {
       setVisible(false);
       if (onFinish) onFinish();
