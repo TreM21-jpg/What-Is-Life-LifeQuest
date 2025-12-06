@@ -1,6 +1,12 @@
 import React, { useState, useRef, useEffect } from "react";
 import AIChatManager, { getSessionMemory } from "./AIChatManager";
 import ResponsiveOverlay, { ResponsiveButton } from "./ResponsiveOverlay.jsx";
+import {
+  saveMessage,
+  getConversationHistory,
+  startSession,
+  endSession,
+} from "./ConversationPersistence.ts";
 
 export default function AIChatBox({ onClose, playerStats = {} }) {
   const [messages, setMessages] = useState([
@@ -11,7 +17,28 @@ export default function AIChatBox({ onClose, playerStats = {} }) {
   ]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+  const [sessionStarted, setSessionStarted] = useState(false);
   const messagesEndRef = useRef(null);
+
+  // Load conversation history on mount
+  useEffect(() => {
+    // Start a new session
+    startSession(playerStats);
+    setSessionStarted(true);
+
+    // Load previous messages from history
+    const history = getConversationHistory();
+    if (history.length > 0) {
+      setMessages((prev) => [prev[0], ...history.slice(0, 10)]); // Show last 10 messages + greeting
+    }
+
+    return () => {
+      // End session when chat closes
+      if (sessionStarted) {
+        endSession();
+      }
+    };
+  }, []);
 
   // Auto-scroll to latest message
   const scrollToBottom = () => {
@@ -28,6 +55,15 @@ export default function AIChatBox({ onClose, playerStats = {} }) {
 
     const userMessage = { sender: "user", text: input };
     setMessages((prev) => [...prev, userMessage]);
+    
+    // Save user message to persistence
+    saveMessage({
+      text: input,
+      sender: "user",
+      timestamp: new Date().toISOString(),
+      context: playerStats,
+    });
+    
     setInput("");
     setLoading(true);
 
@@ -35,12 +71,29 @@ export default function AIChatBox({ onClose, playerStats = {} }) {
       // Pass player stats for context-aware responses
       const reply = await AIChatManager(input, playerStats);
       setMessages((prev) => [...prev, { sender: "ai", text: reply }]);
+      
+      // Save AI reply to persistence
+      saveMessage({
+        text: reply,
+        sender: "ai",
+        timestamp: new Date().toISOString(),
+        context: playerStats,
+      });
     } catch (error) {
       console.error("Chat error:", error);
+      const errorMessage = "I had a moment there. What were we talking about?";
       setMessages((prev) => [
         ...prev,
-        { sender: "ai", text: "I had a moment there. What were we talking about?" },
+        { sender: "ai", text: errorMessage },
       ]);
+      
+      // Save error message to persistence
+      saveMessage({
+        text: errorMessage,
+        sender: "ai",
+        timestamp: new Date().toISOString(),
+        context: playerStats,
+      });
     } finally {
       setLoading(false);
     }
