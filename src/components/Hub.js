@@ -6,6 +6,7 @@ import MultiplayerHub from "./MultiplayerHub";
 import ElementaryStage from "./ElementaryStage";
 import MiddleSchoolStage from "./MiddleSchoolStage";
 import HighSchoolStage from "./HighSchoolStage";
+import DailyInspiration from "./DailyInspiration.jsx";
 import { useProgress } from "./useProgress";
 import "./App.css";
 
@@ -34,6 +35,9 @@ export default function Hub() {
         <option value="MiddleSchool">Middle School</option>
         <option value="HighSchool">High School / Adult</option>
       </select>
+
+      {/* Daily Inspiration */}
+      <DailyInspiration />
 
       <Avatar3D stage={stage} xp={xp} />
       {renderStage()}

@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import HealthBar from "./HealthBar";
 import Inventory from "./Inventory";
 import QuestTrackerHUD from "./QuestTrackerHUD";
 import Minimap from "./Minimap";
+import AIChatBox from "./AIChatBox";
 
 export default function HUDOverlay({
   playerHP,
@@ -11,8 +12,11 @@ export default function HUDOverlay({
   onUseItem,
   activeNPC,
   nextObjectives,
-  playerPosition
+  playerPosition,
+  playerStats = {}
 }) {
+  const [showAIChat, setShowAIChat] = useState(false);
+
   return (
     <div style={{
       position: "absolute",
@@ -30,6 +34,46 @@ export default function HUDOverlay({
         <Inventory items={items} onUseItem={onUseItem} />
       </div>
 
+      {/* AI Chat Button (bottom-left, above inventory) */}
+      <div style={{ 
+        position: "absolute", 
+        bottom: "160px", 
+        left: "20px", 
+        pointerEvents: "auto",
+        zIndex: 101
+      }}>
+        <button
+          onClick={() => setShowAIChat(true)}
+          title="Open AI Assistant (Ctrl+Shift+A)"
+          style={{
+            padding: "12px 20px",
+            backgroundColor: "rgba(0, 212, 255, 0.2)",
+            border: "2px solid rgba(0, 212, 255, 0.6)",
+            borderRadius: "12px",
+            color: "#00d4ff",
+            fontWeight: "600",
+            cursor: "pointer",
+            fontSize: "14px",
+            transition: "all 0.3s ease",
+            boxShadow: "0 0 10px rgba(0, 212, 255, 0.2)",
+            display: "flex",
+            alignItems: "center",
+            gap: "8px",
+            minHeight: "44px"
+          }}
+          onMouseEnter={(e) => {
+            e.target.style.backgroundColor = "rgba(0, 212, 255, 0.4)";
+            e.target.style.boxShadow = "0 0 20px rgba(0, 212, 255, 0.4)";
+          }}
+          onMouseLeave={(e) => {
+            e.target.style.backgroundColor = "rgba(0, 212, 255, 0.2)";
+            e.target.style.boxShadow = "0 0 10px rgba(0, 212, 255, 0.2)";
+          }}
+        >
+          💬 AI Assistant
+        </button>
+      </div>
+
       {/* Quest Tracker (top-right) */}
       <div style={{ position: "absolute", top: "20px", right: "20px", pointerEvents: "auto" }}>
         <QuestTrackerHUD activeNPC={activeNPC} nextObjectives={nextObjectives} />
@@ -39,6 +83,14 @@ export default function HUDOverlay({
       <div style={{ position: "absolute", bottom: "20px", right: "20px", pointerEvents: "auto" }}>
         <Minimap playerPosition={playerPosition} />
       </div>
+
+      {/* AI Chat Modal */}
+      {showAIChat && (
+        <AIChatBox 
+          onClose={() => setShowAIChat(false)} 
+          playerStats={playerStats}
+        />
+      )}
     </div>
   );
 }
