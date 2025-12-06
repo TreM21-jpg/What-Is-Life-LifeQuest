@@ -1,18 +1,26 @@
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
+import { AudioCues } from "./AudioCues";
 
 export function useAmbientAudio(audioFile) {
   useEffect(() => {
-    const audio = new Audio(audioFile);
-    audio.loop = true;
-    audio.volume = 0.4;
-
-    audio.play().catch(() => {
-      console.warn("Autoplay blocked, user interaction required.");
-    });
+    if (!audioFile) return;
+    AudioCues.load("ambient", audioFile);
+    AudioCues.play("ambient", { loop: true, volume: 0.4 });
 
     return () => {
-      audio.pause();
-      audio.currentTime = 0;
+      AudioCues.fadeOut("ambient", 600);
     };
   }, [audioFile]);
+
+  // Return stable function references so consumers (and effects) don't
+  // get new callbacks every render and trigger unnecessary effect runs.
+  const api = useMemo(() => ({
+    playCue: (id, opts) => AudioCues.play(id, opts),
+    fadeOut: (id, ms) => AudioCues.fadeOut(id, ms),
+    stop: (id) => AudioCues.stop(id),
+    load: (id, src) => AudioCues.load(id, src),
+    duck: (id, toVolume, ms) => AudioCues.duck(id, toVolume, ms)
+  }), []);
+
+  return api;
 }
