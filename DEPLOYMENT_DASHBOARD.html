@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LifeQuest Deployment Dashboard</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #1a0033 0%, #330066 100%);
+      color: #fff;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    
+    h1 {
+      font-size: 3em;
+      color: #00d4ff;
+      text-shadow: 0 0 20px #00d4ff;
+      margin-bottom: 10px;
+    }
+    
+    .subtitle {
+      color: #ff0066;
+      font-size: 1.2em;
+    }
+    
+    .dashboard {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      margin-bottom: 40px;
+    }
+    
+    .card {
+      background: rgba(0, 212, 255, 0.05);
+      border: 2px solid #00d4ff;
+      border-radius: 12px;
+      padding: 24px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .card:hover {
+      background: rgba(0, 212, 255, 0.15);
+      transform: translateY(-5px);
+      box-shadow: 0 0 20px #00d4ff;
+    }
+    
+    .card.aws { border-color: #ff9900; }
+    .card.aws:hover { background: rgba(255, 153, 0, 0.1); box-shadow: 0 0 20px #ff9900; }
+    
+    .card.railway { border-color: #0b0d0e; background: rgba(11, 13, 14, 0.1); }
+    .card.railway:hover { box-shadow: 0 0 20px #0b0d0e; }
+    
+    .card.mongodb { border-color: #13aa52; }
+    .card.mongodb:hover { background: rgba(19, 170, 82, 0.1); box-shadow: 0 0 20px #13aa52; }
+    
+    .card h2 {
+      font-size: 1.5em;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .emoji { font-size: 1.4em; }
+    
+    .card p {
+      color: #aaa;
+      margin-bottom: 16px;
+      font-size: 0.95em;
+      line-height: 1.6;
+    }
+    
+    .card .meta {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+    
+    .badge {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.85em;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    .btn {
+      background: linear-gradient(135deg, #00d4ff, #ff0066);
+      color: #000;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 1em;
+      transition: all 0.3s ease;
+      width: 100%;
+    }
+    
+    .btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 15px rgba(0, 212, 255, 0.5);
+    }
+    
+    .btn.secondary {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+    
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(4px);
+    }
+    
+    .modal.show {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .modal-content {
+      background: linear-gradient(135deg, #1a0033 0%, #330066 100%);
+      border: 2px solid #00d4ff;
+      border-radius: 12px;
+      padding: 40px;
+      max-width: 600px;
+      width: 90%;
+      max-height: 80vh;
+      overflow-y: auto;
+      position: relative;
+    }
+    
+    .close {
+      position: absolute;
+      right: 20px;
+      top: 20px;
+      font-size: 2em;
+      color: #00d4ff;
+      cursor: pointer;
+      line-height: 1;
+    }
+    
+    .close:hover {
+      color: #ff0066;
+    }
+    
+    .modal h2 {
+      color: #00d4ff;
+      margin-bottom: 20px;
+      font-size: 2em;
+    }
+    
+    .step {
+      background: rgba(0, 212, 255, 0.05);
+      border-left: 4px solid #00d4ff;
+      padding: 16px;
+      margin-bottom: 16px;
+      border-radius: 4px;
+    }
+    
+    .step h3 {
+      color: #00d4ff;
+      margin-bottom: 8px;
+    }
+    
+    .step code {
+      background: rgba(0, 0, 0, 0.3);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: 'Courier New', monospace;
+      color: #ffd700;
+    }
+    
+    .step pre {
+      background: rgba(0, 0, 0, 0.5);
+      padding: 12px;
+      border-radius: 4px;
+      overflow-x: auto;
+      margin-top: 8px;
+      font-size: 0.85em;
+      border: 1px solid rgba(0, 212, 255, 0.3);
+    }
+    
+    .status {
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      font-weight: bold;
+    }
+    
+    .status.success {
+      background: rgba(19, 170, 82, 0.2);
+      border: 2px solid #13aa52;
+      color: #13aa52;
+    }
+    
+    .status.warning {
+      background: rgba(255, 153, 0, 0.2);
+      border: 2px solid #ff9900;
+      color: #ff9900;
+    }
+    
+    .status.info {
+      background: rgba(0, 212, 255, 0.2);
+      border: 2px solid #00d4ff;
+      color: #00d4ff;
+    }
+    
+    .input-group {
+      margin: 16px 0;
+    }
+    
+    .input-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+      color: #00d4ff;
+    }
+    
+    .input-group input,
+    .input-group textarea {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #00d4ff;
+      background: rgba(0, 0, 0, 0.3);
+      color: #fff;
+      border-radius: 4px;
+      font-family: 'Courier New', monospace;
+      font-size: 0.9em;
+    }
+    
+    .checklist {
+      list-style: none;
+      margin: 16px 0;
+    }
+    
+    .checklist li {
+      padding: 12px;
+      margin-bottom: 8px;
+      background: rgba(0, 212, 255, 0.05);
+      border-left: 4px solid #00d4ff;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .checklist li:before {
+      content: "☐";
+      color: #00d4ff;
+      font-size: 1.2em;
+      min-width: 20px;
+    }
+    
+    .checklist li.completed:before {
+      content: "☑";
+      color: #13aa52;
+    }
+    
+    .quick-commands {
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid #00d4ff;
+      border-radius: 8px;
+      padding: 16px;
+      margin-top: 16px;
+    }
+    
+    .quick-commands h4 {
+      color: #ffd700;
+      margin-bottom: 12px;
+    }
+    
+    .command-box {
+      background: rgba(0, 0, 0, 0.5);
+      padding: 12px;
+      border-radius: 4px;
+      margin-bottom: 8px;
+      font-family: 'Courier New', monospace;
+      color: #00d4ff;
+      word-break: break-all;
+      border: 1px solid #00d4ff;
+      position: relative;
+    }
+    
+    .copy-btn {
+      position: absolute;
+      right: 8px;
+      top: 8px;
+      background: #00d4ff;
+      color: #000;
+      border: none;
+      padding: 4px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.8em;
+      font-weight: bold;
+    }
+    
+    .footer {
+      text-align: center;
+      color: #888;
+      margin-top: 40px;
+      padding: 20px;
+      border-top: 1px solid #00d4ff;
+    }
+    
+    @media (max-width: 768px) {
+      h1 { font-size: 2em; }
+      .dashboard { grid-template-columns: 1fr; }
+      .modal-content { padding: 24px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🚀 LifeQuest Deployment</h1>
+      <p class="subtitle">Choose your deployment destination</p>
+    </header>
+    
+    <div class="dashboard">
+      <!-- Heroku Card -->
+      <div class="card" onclick="openModal('heroku')">
+        <h2><span class="emoji">⚡</span> Heroku</h2>
+        <p>Fastest cloud deployment with automatic scaling</p>
+        <div class="meta">
+          <span class="badge">⏱️ 5-10 min</span>
+          <span class="badge">💰 Free tier</span>
+          <span class="badge">⭐⭐</span>
+        </div>
+        <button class="btn">Deploy Now</button>
+      </div>
+      
+      <!-- Railway Card -->
+      <div class="card railway" onclick="openModal('railway')">
+        <h2><span class="emoji">🚂</span> Railway</h2>
+        <p>Modern platform with GitHub integration and auto-deploy</p>
+        <div class="meta">
+          <span class="badge">⏱️ 10-15 min</span>
+          <span class="badge">💰 Free credits</span>
+          <span class="badge">⭐⭐</span>
+        </div>
+        <button class="btn">Deploy Now</button>
+      </div>
+      
+      <!-- AWS Card -->
+      <div class="card aws" onclick="openModal('aws')">
+        <h2><span class="emoji">☁️</span> AWS EB</h2>
+        <p>Production-grade with auto-scaling and load balancing</p>
+        <div class="meta">
+          <span class="badge">⏱️ 15-30 min</span>
+          <span class="badge">💰 Free tier</span>
+          <span class="badge">⭐⭐⭐</span>
+        </div>
+        <button class="btn">Deploy Now</button>
+      </div>
+      
+      <!-- MongoDB Card -->
+      <div class="card mongodb" onclick="openModal('mongodb')">
+        <h2><span class="emoji">🗄️</span> MongoDB</h2>
+        <p>Set up persistent database for player saves</p>
+        <div class="meta">
+          <span class="badge">⏱️ 5-10 min</span>
+          <span class="badge">💰 Free cluster</span>
+          <span class="badge">Optional</span>
+        </div>
+        <button class="btn">Setup Now</button>
+      </div>
+      
+      <!-- Docker Card -->
+      <div class="card" onclick="openModal('docker')">
+        <h2><span class="emoji">🐳</span> Docker Local</h2>
+        <p>Run backend and MongoDB locally for testing</p>
+        <div class="meta">
+          <span class="badge">⏱️ 2-5 min</span>
+          <span class="badge">💰 Free</span>
+          <span class="badge">Dev only</span>
+        </div>
+        <button class="btn">Run Locally</button>
+      </div>
+      
+      <!-- Quick Links -->
+      <div class="card" onclick="openModal('links')">
+        <h2><span class="emoji">📚</span> Documentation</h2>
+        <p>Reference guides and detailed instructions</p>
+        <div class="meta">
+          <span class="badge">📖 Guides</span>
+          <span class="badge">🔗 Links</span>
+        </div>
+        <button class="btn">View Docs</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Modals -->
+  <div id="herokuModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal('heroku')">&times;</span>
+      <h2>⚡ Heroku Deployment</h2>
+      
+      <div class="status info">ℹ️ Fastest option: 5-10 minutes to live backend</div>
+      
+      <div class="step">
+        <h3>Step 1: Authenticate</h3>
+        <p>Open PowerShell and run:</p>
+        <pre>heroku login -i</pre>
+        <p>Enter your Heroku email and password</p>
+      </div>
+      
+      <div class="step">
+        <h3>Step 2: Create App</h3>
+        <pre>cd c:\Users\tmoore\What-Is-Life-LifeQuest
+heroku apps:create lifequest-api</pre>
+        <p><strong>Note:</strong> If the app name is taken, Heroku will suggest an alternative</p>
+      </div>
+      
+      <div class="step">
+        <h3>Step 3: Deploy Code</h3>
+        <pre>git push heroku main</pre>
+        <p>This pushes your code and automatically builds the Docker image</p>
+      </div>
+      
+      <div class="step">
+        <h3>Step 4: (Optional) Add MongoDB</h3>
+        <pre>heroku config:set MONGODB_URI="mongodb+srv://user:pass@cluster0.mongodb.net/lifequest" --app=lifequest-api</pre>
+        <p>Paste your MongoDB Atlas connection string here</p>
+      </div>
+      
+      <div class="step">
+        <h3>Step 5: View Deployment</h3>
+        <pre>heroku logs --tail --app=lifequest-api</pre>
+        <p>Watch the logs in real-time. Once complete, you'll see:</p>
+        <pre>🚀 LifeQuest Backend Server running on port 3001</pre>
+      </div>
+      
+      <div class="status success">✅ Your URL: https://lifequest-api.herokuapp.com</div>
+      
+      <div class="step">
+        <h3>Step 6: Update Frontend</h3>
+        <p>Add to <code>.env.local</code>:</p>
+        <pre>REACT_APP_API_URL=https://lifequest-api.herokuapp.com</pre>
+      </div>
+      
+      <div class="quick-commands">
+        <h4>🚀 Automated Script (Windows)</h4>
+        <p>Or run the automated PowerShell script:</p>
+        <div class="command-box">
+          powershell -NoProfile -ExecutionPolicy Bypass -File DEPLOY_HEROKU.ps1
+          <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
+        </div>
+      </div>
+      
+      <div class="status warning">⚠️ Important: If you haven't logged in to Heroku before, run <code>heroku login</code> first</div>
+    </div>
+  </div>
+  
+  <div id="railwayModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal('railway')">&times;</span>
+      <h2>🚂 Railway Deployment</h2>
+      
+      <div class="status info">ℹ️ Modern platform with automatic GitHub integration</div>
+      
+      <div class="step">
+        <h3>Step 1: Create Railway Account</h3>
+        <p>Visit <strong>https://railway.app</strong> and:</p>
+        <ul class="checklist">
+          <li>Sign up with GitHub (recommended) or email</li>
+          <li>Create a new project</li>
+          <li>Select "Deploy from GitHub repo"</li>
+        </ul>
+      </div>
+      
+      <div class="step">
+        <h3>Step 2: Connect Your Repository</h3>
+        <ul class="checklist">
+          <li>Authorize Railway to access your GitHub account</li>
+          <li>Select repo: <strong>TreM21-jpg/What-Is-Life-LifeQuest</strong></li>
+          <li>Choose the <strong>main</strong> branch</li>
+        </ul>
+      </div>
+      
+      <div class="step">
+        <h3>Step 3: Configure Services</h3>
+        <p>In the Railway dashboard:</p>
+        <ul class="checklist">
+          <li>Add a new service (click "+" icon)</li>
+          <li>Select <strong>Database → MongoDB</strong></li>
+          <li>Or use MongoDB Atlas + set MONGODB_URI env var</li>
+        </ul>
+      </div>
+      
+      <div class="step">
+        <h3>Step 4: Set Environment Variables</h3>
+        <p>In your service settings → Variables:</p>
+        <div class="input-group">
+          <label>Key: MONGODB_URI</label>
+          <input type="text" placeholder="mongodb+srv://user:pass@cluster.mongodb.net/lifequest" readonly>
+        </div>
+        <p><strong>Note:</strong> If using Railway's MongoDB service, this is auto-set</p>
+      </div>
+      
+      <div class="step">
+        <h3>Step 5: Deploy</h3>
+        <ul class="checklist">
+          <li>Railway auto-deploys on every push to main</li>
+          <li>Or manually trigger from the dashboard</li>
+          <li>Watch deployment logs in real-time</li>
+        </ul>
+      </div>
+      
+      <div class="status success">✅ Your URL: https://your-service.up.railway.app</div>
+      
+      <div class="step">
+        <h3>Step 6: Get Your Deployment URL</h3>
+        <p>In the Railway dashboard, view your service URL. It will be visible in the Deployments section.</p>
+        <p>Update frontend <code>.env.local</code>:</p>
+        <pre>REACT_APP_API_URL=https://your-service.up.railway.app</pre>
+      </div>
+      
+      <div class="status warning">⚠️ Benefits: Auto-deploy on every push, GitHub integration, modern UI</div>
+    </div>
+  </div>
+  
+  <div id="awsModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal('aws')">&times;</span>
+      <h2>☁️ AWS Elastic Beanstalk Deployment</h2>
+      
+      <div class="status info">ℹ️ Production-grade deployment with auto-scaling</div>
+      
+      <div class="step">
+        <h3>Prerequisites</h3>
+        <p>Install required tools:</p>
+        <pre>pip install awsebcli --user
+npm install -g aws-cli</pre>
+      </div>
+      
+      <div class="step">
+        <h3>Step 1: Configure AWS Credentials</h3>
+        <pre>aws configure</pre>
+        <p>Enter your AWS Access Key ID, Secret Access Key, default region (us-east-1), and output format (json)</p>
+      </div>
+      
+      <div class="step">
+        <h3>Step 2: Initialize Elastic Beanstalk</h3>
+        <pre>cd c:\Users\tmoore\What-Is-Life-LifeQuest
+eb init -p "Node.js 18 running on 64bit Amazon Linux 2" lifequest-api --region us-east-1</pre>
+      </div>
+      
+      <div class="step">
+        <h3>Step 3: Create Environment</h3>
+        <pre>eb create lifequest-env --instance-type t3.micro</pre>
+        <p>This creates an EC2 instance. Takes 3-5 minutes.</p>
+      </div>
+      
+      <div class="step">
+        <h3>Step 4: Set Environment Variables</h3>
+        <pre>eb setenv MONGODB_URI="mongodb+srv://user:pass@cluster.mongodb.net/lifequest"</pre>
+      </div>
+      
+      <div class="step">
+        <h3>Step 5: Deploy Application</h3>
+        <pre>eb deploy</pre>
+      </div>
+      
+      <div class="step">
+        <h3>Step 6: Get Deployment URL</h3>
+        <pre>eb open --print-url</pre>
+      </div>
+      
+      <div class="status success">✅ Your backend is now live with auto-scaling!</div>
+      
+      <div class="quick-commands">
+        <h4>Useful Commands</h4>
+        <div class="command-box">eb status<button class="copy-btn" onclick="copyToClipboard(this)">Copy</button></div>
+        <div class="command-box">eb logs --all<button class="copy-btn" onclick="copyToClipboard(this)">Copy</button></div>
+        <div class="command-box">eb terminate<button class="copy-btn" onclick="copyToClipboard(this)">Copy</button></div>
+      </div>
+    </div>
+  </div>
+  
+  <div id="mongodbModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal('mongodb')">&times;</span>
+      <h2>🗄️ MongoDB Atlas Setup</h2>
+      
+      <div class="status info">ℹ️ Free tier: 512MB storage, perfect for indie games</div>
+      
+      <div class="step">
+        <h3>Step 1: Create Account</h3>
+        <p>Visit <strong>https://cloud.mongodb.com</strong> and:</p>
+        <ul class="checklist">
+          <li>Click "Sign Up"</li>
+          <li>Create account (email or GitHub)</li>
+          <li>Verify email</li>
+        </ul>
+      </div>
+      
+      <div class="step">
+        <h3>Step 2: Create Free Cluster</h3>
+        <ul class="checklist">
+          <li>Click "Create" → "Build a Database"</li>
+          <li>Choose <strong>Shared Tier</strong> (Free)</li>
+          <li>Select AWS as provider</li>
+          <li>Choose closest region</li>
+          <li>Click "Create Cluster"</li>
+        </ul>
+        <p><em>Takes 3-5 minutes to provision</em></p>
+      </div>
+      
+      <div class="step">
+        <h3>Step 3: Create Database User</h3>
+        <ul class="checklist">
+          <li>Click "Database Access" in left sidebar</li>
+          <li>Click "Add New Database User"</li>
+          <li>Username: <strong>lifequest</strong></li>
+          <li>Generate secure password (or create one)</li>
+          <li>Select "Built-in Role" → "Atlas admin"</li>
+          <li>Click "Add User"</li>
+        </ul>
+      </div>
+      
+      <div class="step">
+        <h3>Step 4: Configure Network Access</h3>
+        <ul class="checklist">
+          <li>Click "Network Access" in left sidebar</li>
+          <li>Click "Add IP Address"</li>
+          <li>Choose <strong>0.0.0.0/0</strong> (allow anywhere)</li>
+          <li>Click "Confirm"</li>
+        </ul>
+        <p><em>⚠️ For production: whitelist only your app's IP</em></p>
+      </div>
+      
+      <div class="step">
+        <h3>Step 5: Get Connection String</h3>
+        <ul class="checklist">
+          <li>Click your cluster name</li>
+          <li>Click "Connect"</li>
+          <li>Select "Connect your application"</li>
+          <li>Copy the connection string</li>
+        </ul>
+      </div>
+      
+      <div class="step">
+        <h3>Step 6: Use Connection String</h3>
+        <p>Replace placeholders in the string:</p>
+        <pre>&lt;username&gt; → lifequest
+&lt;password&gt; → your_generated_password
+myFirstDatabase → lifequest</pre>
+        
+        <p>Example:</p>
+        <pre>mongodb+srv://lifequest:YourPassword123@cluster0.abcd.mongodb.net/lifequest?retryWrites=true&w=majority</pre>
+      </div>
+      
+      <div class="step">
+        <h3>Step 7: Set in Your Host</h3>
+        <p><strong>For Heroku:</strong></p>
+        <pre>heroku config:set MONGODB_URI="your_connection_string" --app=lifequest-api</pre>
+        
+        <p><strong>For Railway:</strong></p>
+        <p>Set MONGODB_URI in Dashboard → Variables</p>
+        
+        <p><strong>For AWS EB:</strong></p>
+        <pre>eb setenv MONGODB_URI="your_connection_string"</pre>
+        
+        <p><strong>For Local:</strong></p>
+        <pre>echo MONGODB_URI=your_connection_string >> .env
+node backend/server-enhanced.js</pre>
+      </div>
+      
+      <div class="status success">✅ Verify with: curl https://your-backend/health</div>
+      <p style="margin-top: 12px;">Should show: <code>"database": "MongoDB"</code></p>
+    </div>
+  </div>
+  
+  <div id="dockerModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal('docker')">&times;</span>
+      <h2>🐳 Docker Local Development</h2>
+      
+      <div class="status info">ℹ️ Run backend + MongoDB locally with Docker</div>
+      
+      <div class="step">
+        <h3>Prerequisites</h3>
+        <p>Install <strong>Docker Desktop</strong>:</p>
+        <ul class="checklist">
+          <li>Windows/Mac: https://www.docker.com/products/docker-desktop</li>
+          <li>Linux: Install Docker Engine via package manager</li>
+          <li>Verify: <code>docker --version</code></li>
+        </ul>
+      </div>
+      
+      <div class="step">
+        <h3>Step 1: Start Docker Compose</h3>
+        <pre>cd c:\Users\tmoore\What-Is-Life-LifeQuest
+docker compose up --build -d</pre>
+        <p>The <code>-d</code> flag runs in the background</p>
+      </div>
+      
+      <div class="step">
+        <h3>Step 2: Verify Services</h3>
+        <pre>docker compose ps</pre>
+        <p>Should show both services running:</p>
+        <ul class="checklist">
+          <li>lifequest-mongo (MongoDB on port 27017)</li>
+          <li>lifequest-backend (Backend on port 3001)</li>
+        </ul>
+      </div>
+      
+      <div class="step">
+        <h3>Step 3: Test Health Endpoint</h3>
+        <pre>curl http://localhost:3001/health</pre>
+        <p>Should return JSON with <code>"database": "MongoDB"</code></p>
+      </div>
+      
+      <div class="step">
+        <h3>Step 4: View Logs</h3>
+        <pre>docker compose logs -f backend</pre>
+        <p>Watch backend logs in real-time</p>
+      </div>
+      
+      <div class="step">
+        <h3>Step 5: Test API Endpoints</h3>
+        <pre>curl http://localhost:3001/api/leaderboard
+curl http://localhost:3001/api/achievements
+curl http://localhost:3001/api/lore</pre>
+      </div>
+      
+      <div class="step">
+        <h3>Stop Services</h3>
+        <pre>docker compose down</pre>
+        <p>This stops and removes containers (data persists)</p>
+      </div>
+      
+      <div class="status success">✅ Now test the frontend at http://localhost:3000</div>
+      <p style="margin-top: 12px;">Click the Dev/Test buttons to verify save/load functionality</p>
+    </div>
+  </div>
+  
+  <div id="linksModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal('links')">&times;</span>
+      <h2>📚 Documentation & References</h2>
+      
+      <div class="step">
+        <h3>📖 In-Repo Documentation</h3>
+        <ul class="checklist">
+          <li><strong>QUICKSTART_DEPLOY.md</strong> - Quick 5-minute guide</li>
+          <li><strong>README_DEPLOY.md</strong> - Comprehensive reference</li>
+          <li><strong>DEVELOPMENT_CHECKLIST.md</strong> - Integration checklist</li>
+          <li><strong>DEPLOYMENT_COMPLETE.md</strong> - Summary of all systems</li>
+        </ul>
+      </div>
+      
+      <div class="step">
+        <h3>🔧 Deployment Scripts</h3>
+        <ul class="checklist">
+          <li><strong>DEPLOY_HEROKU.ps1</strong> - Automated Heroku deploy (Windows)</li>
+          <li><strong>DEPLOY_HEROKU.sh</strong> - Automated Heroku deploy (Mac/Linux)</li>
+          <li><strong>DEPLOY_RAILWAY.sh</strong> - Railway setup guide</li>
+          <li><strong>DEPLOY_AWS_EB.sh</strong> - AWS EB deployment</li>
+          <li><strong>SETUP_MONGODB_ATLAS.sh</strong> - MongoDB setup</li>
+        </ul>
+      </div>
+      
+      <div class="step">
+        <h3>🌐 External Links</h3>
+        <ul style="list-style: none; margin-top: 12px;">
+          <li><a href="https://heroku.com" target="_blank" style="color: #00d4ff;">⚡ Heroku</a> - PaaS deployment</li>
+          <li><a href="https://railway.app" target="_blank" style="color: #00d4ff;">🚂 Railway</a> - Modern platform</li>
+          <li><a href="https://aws.amazon.com/elasticbeanstalk" target="_blank" style="color: #00d4ff;">☁️ AWS Elastic Beanstalk</a> - Production hosting</li>
+          <li><a href="https://cloud.mongodb.com" target="_blank" style="color: #00d4ff;">🗄️ MongoDB Atlas</a> - Managed database</li>
+          <li><a href="https://www.docker.com" target="_blank" style="color: #00d4ff;">🐳 Docker</a> - Containerization</li>
+        </ul>
+      </div>
+      
+      <div class="step">
+        <h3>💡 Quick Tips</h3>
+        <ul class="checklist">
+          <li>Start with Heroku for fastest deployment</li>
+          <li>Use MongoDB Atlas free tier (512MB)</li>
+          <li>Test locally with Docker first</li>
+          <li>Set REACT_APP_API_URL before deploying frontend</li>
+          <li>Verify health endpoint after deployment</li>
+        </ul>
+      </div>
+      
+      <div class="step">
+        <h3>🐛 Troubleshooting</h3>
+        <ul class="checklist">
+          <li><strong>Connection refused:</strong> Ensure backend is running and URL is correct</li>
+          <li><strong>MongoDB error:</strong> Check MONGODB_URI env var is set</li>
+          <li><strong>Heroku auth failed:</strong> Run <code>heroku login</code> first</li>
+          <li><strong>Docker error:</strong> Ensure Docker Desktop is running</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  
+  <div class="footer">
+    <p>🎮 LifeQuest Deployment Dashboard</p>
+    <p>All systems ready for deployment • Choose your platform above</p>
+  </div>
+
+  <script>
+    function openModal(modalName) {
+      const modalId = modalName + 'Modal';
+      document.getElementById(modalId).classList.add('show');
+    }
+    
+    function closeModal(modalName) {
+      const modalId = modalName + 'Modal';
+      document.getElementById(modalId).classList.remove('show');
+    }
+    
+    function copyToClipboard(button) {
+      const commandBox = button.parentElement;
+      const text = commandBox.innerText.split('\nCopy')[0].trim();
+      navigator.clipboard.writeText(text).then(() => {
+        const originalText = button.innerText;
+        button.innerText = '✓ Copied';
+        setTimeout(() => {
+          button.innerText = originalText;
+        }, 2000);
+      });
+    }
+    
+    // Close modal when clicking outside
+    window.onclick = function(event) {
+      if (event.target.classList.contains('modal')) {
+        event.target.classList.remove('show');
+      }
+    }
+  </script>
+</body>
+</html>
