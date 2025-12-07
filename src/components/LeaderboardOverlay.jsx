@@ -1,8 +1,54 @@
-import React from "react";
+/**
+ * LeaderboardOverlay.jsx (Enhanced)
+ * 
+ * Global leaderboard with backend integration
+ * Supports persistent rankings, multiple sort options, time periods
+ */
+
+import React, { useState, useEffect } from "react";
+import { backendAPI } from "../services/BackendAPI.js";
 import NeonTheme from "./NeonTheme.js";
 
 export default function LeaderboardOverlay({ players, onClose }) {
-  if (!players || players.length === 0) return null;
+  const [entries, setEntries] = useState(players || []);
+  const [playerRank, setPlayerRank] = useState(null);
+  const [sortBy, setSortBy] = useState("xp");
+  const [period, setPeriod] = useState("allTime");
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    if (!players || players.length === 0) {
+      loadLeaderboard();
+    }
+  }, []);
+
+  async function loadLeaderboard() {
+    try {
+      setIsLoading(true);
+      const data = await backendAPI.getLeaderboard({
+        limit: 50,
+        period,
+        sortBy
+      });
+      setEntries(data);
+
+      const rank = await backendAPI.getPlayerRank(sortBy);
+      setPlayerRank(rank);
+    } catch (error) {
+      console.warn("Failed to load leaderboard from backend, using local data");
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  if (!entries || entries.length === 0) return null;
+
+  const getMedalEmoji = (rank) => {
+    if (rank === 1) return "🥇";
+    if (rank === 2) return "🥈";
+    if (rank === 3) return "🥉";
+    return `#${rank}`;
+  };
 
   return (
     <div style={{
@@ -23,8 +69,36 @@ export default function LeaderboardOverlay({ players, onClose }) {
         marginBottom: "20px",
         textShadow: NeonTheme.shadows.cyanGlow
       }}>
-        Leaderboard
+        🏆 LEADERBOARD
       </h1>
+
+      {/* Controls */}
+      <div style={{
+        display: "flex",
+        gap: "10px",
+        marginBottom: "20px",
+        flexWrap: "wrap",
+        justifyContent: "center"
+      }}>
+        {["xp", "questsCompleted", "playtime"].map((option) => (
+          <button
+            key={option}
+            onClick={() => { setSortBy(option); loadLeaderboard(); }}
+            style={{
+              padding: "8px 12px",
+              background: sortBy === option ? NeonTheme.colors.cyan : "transparent",
+              color: sortBy === option ? "#000" : NeonTheme.colors.cyan,
+              border: `2px solid ${NeonTheme.colors.cyan}`,
+              borderRadius: "4px",
+              cursor: "pointer",
+              fontSize: "12px",
+              fontWeight: "bold"
+            }}
+          >
+            {option === "xp" ? "XP" : option === "questsCompleted" ? "Quests" : "Time"}
+          </button>
+        ))}
+      </div>
 
       <div style={{
         flexGrow: 1,
@@ -38,7 +112,7 @@ export default function LeaderboardOverlay({ players, onClose }) {
         color: NeonTheme.colors.lightText
       }}>
         <ol style={{ paddingLeft: "20px" }}>
-          {players.map((p, i) => (
+          {entries.map((p, i) => (
             <li key={i} style={{
               marginBottom: "20px",
               padding: "12px",
@@ -49,12 +123,14 @@ export default function LeaderboardOverlay({ players, onClose }) {
               animation: "rankGlow 3s infinite alternate"
             }}>
               <strong style={{
-                color: i === 0 ? NeonTheme.colors.gold : NeonTheme.colors.green,
+                color: i === 0 ? NeonTheme.colors.gold : i === 1 ? NeonTheme.colors.cyan : NeonTheme.colors.green,
                 fontSize: "18px"
               }}>
-                {i + 1}. {p.name}
+                {getMedalEmoji(i + 1)} {p.name}
               </strong>
-              <p style={{ fontSize: "14px" }}>Score: {p.score}</p>
+              <p style={{ fontSize: "14px" }}>
+                {sortBy === "xp" ? `XP: ${p.xp || 0}` : sortBy === "questsCompleted" ? `Quests: ${p.questsCompleted || 0}` : `Time: ${p.playtime || 0}h`}
+              </p>
 
               {/* Climb/Fall indicator */}
               {p.change > 0 && (

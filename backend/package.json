@@ -1,0 +1,32 @@
+{
+  "name": "lifequest-api",
+  "version": "1.0.0",
+  "description": "LifeQuest Backend API - Game state persistence, leaderboards, achievements",
+  "main": "server-starter.js",
+  "scripts": {
+    "start": "node server-starter.js",
+    "dev": "nodemon server-starter.js",
+    "test": "jest",
+    "lint": "eslint ."
+  },
+  "keywords": [
+    "game",
+    "api",
+    "rest",
+    "express",
+    "lifequest"
+  ],
+  "author": "LifeQuest Team",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.20"
+  },
+  "engines": {
+    "node": "18.x"
+  }
+}

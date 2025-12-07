@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useAmbientAudio } from "./useAmbientAudio.js";
+import KeyboardManager from "./KeyboardManager.js";
+import { backendAPI } from "../services/BackendAPI.js";
 
 // Sequences
 import IntroSequence from "./IntroSequence.jsx";
@@ -14,6 +16,8 @@ import SettingsOverlay from "./SettingsOverlay.jsx";
 import AnalyticsOverlay from "./AnalyticsOverlay.jsx";
 import MapOverlay from "./MapOverlay.jsx";
 import QuestOverlay from "./QuestOverlay.jsx";
+import AccessibilityPanel from "./AccessibilityPanel.jsx";
+import DailyChallengesAdvanced from "./DailyChallengesAdvanced.jsx";
 
 // Shortcut hints
 import ShortcutHint from "./ShortcutHint.jsx";
@@ -23,6 +27,8 @@ export default function OverlayManager({ overlays, autoRegion }) {
   const [phase, setPhase] = useState("intro"); // intro → app → outro
   const [activeOverlay, setActiveOverlay] = useState(null);
   const [selectedRegion, setSelectedRegion] = useState(null);
+  const [keyboardManager] = useState(() => new KeyboardManager());
+  const [autoSaveCounter, setAutoSaveCounter] = useState(0);
 
   const openOverlay = useCallback((name) => {
     setActiveOverlay(name);
@@ -37,28 +43,89 @@ export default function OverlayManager({ overlays, autoRegion }) {
     setSelectedRegion(null);
   }, [fadeOut, playCue]);
 
-  // === GLOBAL KEYBOARD SHORTCUTS ===
+  /**
+   * Auto-save game state to backend every 60 seconds
+   */
   useEffect(() => {
-    const handleKey = (e) => {
-      if (phase === "intro") {
-        if (e.key === "Enter") setPhase("app"); // skip intro
+    const autoSaveInterval = setInterval(() => {
+      const gameData = {
+        xp: overlays.stats?.xp || 0,
+        level: overlays.stats?.level || 1,
+        inventory: overlays.items || [],
+        questsCompleted: overlays.stats?.questsCompleted || 0,
+        achievements: overlays.achievements || [],
+        stats: overlays.stats || {},
+        activeOverlay,
+        selectedRegion
+      };
+
+      backendAPI.saveGameState(gameData).catch(error => {
+        console.warn("Auto-save failed:", error);
+      });
+
+      setAutoSaveCounter(prev => prev + 1);
+    }, 60000); // Every 60 seconds
+
+    return () => clearInterval(autoSaveInterval);
+  }, [overlays, activeOverlay, selectedRegion]);
+
+  /**
+   * Register keyboard shortcuts via KeyboardManager
+   */
+  useEffect(() => {
+    // Navigation overlays
+    keyboardManager.registerListener("INVENTORY", () => {
+      if (phase === "app") openOverlay("inventory");
+    });
+    keyboardManager.registerListener("MAP", () => {
+      if (phase === "app") openOverlay("map");
+    });
+    keyboardManager.registerListener("QUESTS", () => {
+      if (phase === "app") openOverlay("quest");
+    });
+    keyboardManager.registerListener("ACHIEVEMENTS", () => {
+      if (phase === "app") openOverlay("achievements");
+    });
+    keyboardManager.registerListener("SETTINGS", () => {
+      if (phase === "app") openOverlay("settings");
+    });
+    keyboardManager.registerListener("LORE", () => {
+      if (phase === "app") openOverlay("lore");
+    });
+
+    // Combat & utility
+    keyboardManager.registerListener("COMBAT", () => {
+      if (phase === "app") openOverlay("combat");
+    });
+    keyboardManager.registerListener("ANALYTICS", () => {
+      if (phase === "app") openOverlay("analytics");
+    });
+    keyboardManager.registerListener("SHOP", () => {
+      if (phase === "app") openOverlay("shop");
+    });
+
+    // Close overlay
+    keyboardManager.registerListener("PAUSE", () => {
+      if (activeOverlay) {
+        closeOverlay();
       } else if (phase === "app") {
-        if (e.key === "Escape") closeOverlay();
-        if (e.ctrlKey && e.key.toLowerCase() === "i") openOverlay("inventory");
-        if (e.ctrlKey && e.key.toLowerCase() === "s") openOverlay("shop");
-        if (e.ctrlKey && e.key.toLowerCase() === "c") openOverlay("combat");
-        if (e.ctrlKey && e.key.toLowerCase() === "a") openOverlay("achievements");
-        if (e.ctrlKey && e.key.toLowerCase() === "t") openOverlay("settings");
-        if (e.ctrlKey && e.key.toLowerCase() === "n") openOverlay("analytics");
-        if (e.ctrlKey && e.key.toLowerCase() === "m") openOverlay("map");
-        if (e.ctrlKey && e.key.toLowerCase() === "o") setPhase("outro");
-      } else if (phase === "outro") {
-        if (e.key === "Enter") setPhase("app");
+        setPhase("outro");
       }
+    });
+
+    // Phase transitions
+    keyboardManager.registerListener("SKIP_INTRO", () => {
+      if (phase === "intro") setPhase("app");
+    });
+    keyboardManager.registerListener("SKIP_OUTRO", () => {
+      if (phase === "outro") setPhase("app");
+    });
+
+    return () => {
+      // Cleanup listeners
+      keyboardManager.disableAllListeners();
     };
-    window.addEventListener("keydown", handleKey);
-    return () => window.removeEventListener("keydown", handleKey);
-  }, [phase, openOverlay, closeOverlay]);
+  }, [phase, activeOverlay, openOverlay, closeOverlay, keyboardManager]);
 
   // === AUTO REGION TRIGGER ===
   useEffect(() => {
@@ -138,6 +205,9 @@ export default function OverlayManager({ overlays, autoRegion }) {
         />
       )}
 
+      {/* Accessibility Panel - Always available */}
+      <AccessibilityPanel />
+
       {/* Shortcut hints */}
       {activeOverlay && (
         <ShortcutHint hints={[
@@ -149,9 +219,24 @@ export default function OverlayManager({ overlays, autoRegion }) {
           { key: "Ctrl+T", action: "Open Settings" },
           { key: "Ctrl+N", action: "Open Analytics" },
           { key: "Ctrl+M", action: "Open Map" },
-          { key: "Ctrl+O", action: "Trigger Outro" }
+          { key: "Ctrl+Q", action: "Open Quests" },
+          { key: "Ctrl+L", action: "Open Lore" },
+          { key: "Alt+?", action: "Toggle Shortcuts" }
         ]} />
       )}
+
+      {/* Auto-save indicator */}
+      <div style={{
+        position: "absolute",
+        bottom: 20,
+        right: 20,
+        fontSize: "12px",
+        color: "#00d4ff",
+        opacity: 0.6,
+        fontFamily: "monospace"
+      }}>
+        Auto-saves: {autoSaveCounter}
+      </div>
     </>
   );
 }
