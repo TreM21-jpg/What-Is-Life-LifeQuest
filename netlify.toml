@@ -11,7 +11,7 @@
 # ✅ Environment variables for Netlify
 [context.production.environment]
   NODE_ENV = "production"
-  REACT_APP_API_URL = "https://lifequest.onrender.com/api"
+  REACT_APP_API_URL = "https://YOUR_RAILWAY_APP_URL"
 
 # ✅ Headers for caching and security
 [[headers]]

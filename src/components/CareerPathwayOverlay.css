@@ -1,0 +1,392 @@
+.career-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease-in;
+}
+
+.overlay-content {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  border: 2px solid #FF6B6B;
+  border-radius: 12px;
+  padding: 40px;
+  max-width: 1200px;
+  width: 95%;
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow: 0 12px 40px rgba(255, 107, 107, 0.3);
+  color: #fff;
+}
+
+.close-btn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: none;
+  border: none;
+  font-size: 28px;
+  color: #FF6B6B;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.close-btn:hover {
+  transform: scale(1.2);
+}
+
+.overlay-content h1 {
+  text-align: center;
+  color: #FF6B6B;
+  margin-bottom: 10px;
+  font-size: 32px;
+}
+
+.intro-text {
+  text-align: center;
+  color: #bbb;
+  font-size: 15px;
+  margin-bottom: 25px;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.current-pathway-banner {
+  background: rgba(255, 107, 107, 0.15);
+  border: 2px solid #FF6B6B;
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 25px;
+  text-align: center;
+  color: #FF9999;
+}
+
+.current-pathway-banner p {
+  margin: 0;
+  font-weight: bold;
+}
+
+/* PATHWAYS GRID */
+.pathways-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.pathway-card {
+  background: rgba(255, 107, 107, 0.1);
+  border: 2px solid #FF6B6B;
+  border-radius: 10px;
+  padding: 25px;
+  cursor: pointer;
+  transition: all 0.3s;
+  position: relative;
+  overflow: hidden;
+}
+
+.pathway-card.available:hover {
+  background: rgba(255, 107, 107, 0.2);
+  transform: translateY(-8px);
+  box-shadow: 0 12px 25px rgba(255, 107, 107, 0.3);
+  border-color: #FF9999;
+}
+
+.pathway-card.locked {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: rgba(100, 100, 100, 0.1);
+  border-color: #666;
+}
+
+.pathway-card.locked:hover {
+  transform: none;
+}
+
+.pathway-icon {
+  font-size: 48px;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.pathway-card h3 {
+  color: #FF6B6B;
+  margin: 0 0 10px 0;
+  font-size: 18px;
+}
+
+.pathway-description {
+  color: #ddd;
+  font-size: 14px;
+  margin-bottom: 15px;
+  line-height: 1.4;
+}
+
+.pathway-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 15px;
+}
+
+.pathway-meta .theme {
+  color: #aaa;
+  font-size: 12px;
+  font-style: italic;
+}
+
+.pathway-meta .duration {
+  color: #aaa;
+  font-size: 12px;
+}
+
+.explore-btn {
+  width: 100%;
+  padding: 10px;
+  background: #FF6B6B;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.explore-btn:hover {
+  background: #FF9999;
+  transform: scale(1.02);
+  box-shadow: 0 4px 12px rgba(255, 107, 107, 0.4);
+}
+
+.lock-requirement {
+  color: #FF9999;
+  font-size: 14px;
+  font-weight: bold;
+  margin: 15px 0;
+}
+
+.current-status {
+  color: #aaa;
+  font-size: 12px;
+  margin: 0;
+}
+
+/* DETAIL MODAL */
+.pathway-detail-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.95);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  animation: fadeIn 0.2s ease-in;
+}
+
+.detail-content {
+  background: linear-gradient(135deg, #2d2d44 0%, #1a1a2e 100%);
+  border: 2px solid #FF6B6B;
+  border-radius: 12px;
+  padding: 40px;
+  max-width: 700px;
+  width: 95%;
+  max-height: 85vh;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: 0 15px 50px rgba(255, 107, 107, 0.4);
+}
+
+.close-detail {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: none;
+  border: none;
+  font-size: 28px;
+  color: #FF6B6B;
+  cursor: pointer;
+}
+
+.detail-header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid #FF6B6B;
+}
+
+.detail-icon {
+  font-size: 48px;
+}
+
+.detail-header h2 {
+  color: #FF6B6B;
+  margin: 0;
+  font-size: 24px;
+}
+
+.detail-section {
+  margin-bottom: 25px;
+}
+
+.detail-section h3 {
+  color: #FF6B6B;
+  margin-bottom: 12px;
+  font-size: 16px;
+}
+
+.detail-section p {
+  color: #ddd;
+  font-size: 14px;
+  line-height: 1.6;
+  margin: 8px 0;
+}
+
+.detail-theme {
+  color: #aaa;
+  font-style: italic;
+}
+
+.milestones-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.milestone {
+  display: flex;
+  gap: 15px;
+  background: rgba(255, 107, 107, 0.1);
+  padding: 15px;
+  border-radius: 6px;
+  border-left: 4px solid #FF6B6B;
+}
+
+.milestone.secret {
+  border-left-color: #FFD700;
+  background: rgba(255, 215, 0, 0.1);
+}
+
+.milestone-number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: #FF6B6B;
+  border-radius: 50%;
+  color: #fff;
+  font-weight: bold;
+  flex-shrink: 0;
+}
+
+.milestone.secret .milestone-number {
+  background: #FFD700;
+  color: #000;
+}
+
+.milestone h4 {
+  color: #FF6B6B;
+  margin: 0 0 6px 0;
+  font-size: 14px;
+}
+
+.milestone.secret h4 {
+  color: #FFD700;
+}
+
+.milestone p {
+  color: #aaa;
+  font-size: 12px;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.consequences {
+  background: rgba(255, 107, 107, 0.1);
+  padding: 15px;
+  border-radius: 6px;
+  border-left: 4px solid #FF6B6B;
+}
+
+.consequences p {
+  color: #ddd;
+  margin: 0;
+  font-size: 14px;
+}
+
+.commit-btn {
+  width: 100%;
+  padding: 15px;
+  background: #FF6B6B;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s;
+  margin-top: 20px;
+}
+
+.commit-btn:hover:not(:disabled) {
+  background: #FF9999;
+  transform: scale(1.02);
+  box-shadow: 0 8px 20px rgba(255, 107, 107, 0.5);
+}
+
+.commit-btn:disabled {
+  background: #666;
+  cursor: default;
+  opacity: 0.7;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .overlay-content {
+    padding: 25px;
+  }
+
+  .pathways-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .detail-header {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .detail-content {
+    padding: 25px;
+  }
+
+  .milestone {
+    gap: 12px;
+  }
+
+  .milestone-number {
+    width: 35px;
+    height: 35px;
+    font-size: 14px;
+  }
+}
