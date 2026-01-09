@@ -1,0 +1,107 @@
+/**
+ * QuestNPC.jsx
+ * 
+ * Interactive NPC for quests in the 3D world
+ * Features:
+ * - Quest marker above head
+ * - Click to interact and receive quests
+ * - Dialogue system
+ * - Quest tracking
+ */
+
+import React, { useRef, useState } from "react";
+import { useFrame } from "@react-three/fiber";
+import { Text } from "@react-three/drei";
+import * as THREE from "three";
+
+export default function QuestNPC({
+  position = [0, 0, 0],
+  name = "NPC",
+  questTitle = "Untitled Quest",
+  questDescription = "Complete this quest",
+  questReward = 50,
+  onAcceptQuest,
+  hasActiveQuest = false,
+  isCompleted = false,
+}) {
+  const groupRef = useRef();
+  const [hovered, setHovered] = useState(false);
+  const [showDialog, setShowDialog] = useState(false);
+
+  // Bobbing animation
+  useFrame((state) => {
+    if (groupRef.current) {
+      groupRef.current.position.y =
+        position[1] + Math.sin(state.clock.elapsedTime * 2) * 0.3;
+    }
+  });
+
+  // Quest marker color based on state
+  let markerColor = "#ffd700"; // Yellow = available
+  if (hasActiveQuest) markerColor = "#00ffff"; // Cyan = active
+  if (isCompleted) markerColor = "#00ff88"; // Green = completed
+
+  return (
+    <group ref={groupRef} position={position} onClick={() => setShowDialog(true)}>
+      {/* NPC Body - Simple sphere */}
+      <mesh
+        castShadow
+        onPointerEnter={() => setHovered(true)}
+        onPointerLeave={() => setHovered(false)}
+      >
+        <sphereGeometry args={[0.5, 32, 32]} />
+        <meshStandardMaterial
+          color={hovered ? "#00ffff" : "#4488ff"}
+          emissive={hovered ? "#00ffff" : "#002266"}
+          emissiveIntensity={hovered ? 0.5 : 0.2}
+        />
+      </mesh>
+
+      {/* Quest marker above NPC */}
+      <mesh position={[0, 1.2, 0]}>
+        <sphereGeometry args={[0.3, 16, 16]} />
+        <meshBasicMaterial color={markerColor} />
+      </mesh>
+
+      {/* Glow effect for quest marker */}
+      <mesh position={[0, 1.2, 0]}>
+        <sphereGeometry args={[0.4, 16, 16]} />
+        <meshBasicMaterial
+          color={markerColor}
+          transparent
+          opacity={0.3}
+          wireframe
+        />
+      </mesh>
+
+      {/* NPC name label */}
+      <Text
+        position={[0, 1.8, 0]}
+        fontSize={0.3}
+        color={markerColor}
+        anchorX="center"
+        anchorY="bottom"
+        outlineWidth={0.02}
+        outlineColor="#000"
+      >
+        {name}
+      </Text>
+
+      {/* Quest title label (closer when hovered) */}
+      {hovered && (
+        <Text
+          position={[0, -1, 0]}
+          fontSize={0.2}
+          color="#ffd700"
+          anchorX="center"
+          anchorY="top"
+          maxWidth={2}
+          outlineWidth={0.02}
+          outlineColor="#000"
+        >
+          {questTitle}
+        </Text>
+      )}
+    </group>
+  );
+}

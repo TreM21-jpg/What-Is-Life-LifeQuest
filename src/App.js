@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import OverlayManager from "./components/OverlayManager.jsx";
 import { useAmbientAudio } from "./components/useAmbientAudio";
-import GameScene from "./components/GameScene.js";
+import Game3D from "./components/Game3D";
 import CinematicSequence from "./components/CinematicSequence.jsx";
 import LifeQuestLogo from "./components/LifeQuestLogo";
 import { playCinematic } from "./utils/cinematicSequences";
@@ -113,12 +113,21 @@ function App() {
   const [currentSequence, setCurrentSequence] = useState(null);
 
   // === Auto-play intro cinematic on first app load ===
-  useEffect(() => {
-    // Only play intro once on component mount
-    const seq = playCinematic("intro");
-    setCurrentSequence(seq);
-    setShowCinematic(true);
-  }, []); // Empty dependency array ensures this runs only once on mount
+   // === Player 3D state ===
+   const [playerState, setPlayerState] = useState({
+     position: { x: 0, y: 1, z: 0 },
+     velocity: { x: 0, y: 0, z: 0 },
+     animation: "idle",
+     stamina: 100,
+   });
+
+   // === Auto-play intro cinematic on first app load ===
+   useEffect(() => {
+     // Only play intro once on component mount
+     const seq = playCinematic("intro");
+     setCurrentSequence(seq);
+     setShowCinematic(true);
+   }, []); // Empty dependency array ensures this runs only once on mount
 
   const API_BASE = process.env.REACT_APP_API_URL || "http://localhost:3001";
   const SESSION_ID = "dev-session-1";
@@ -200,11 +209,22 @@ function App() {
         </span>
       </div>
 
-      {/* Game world */}
-      <GameScene overlays={overlays} />
+      {/* 3D Game world */}
+      <Game3D 
+        playerPosition={[0, 1, 0]}
+         onPlayerStateChange={(state) => setPlayerState(state)}
+        cameraMode="follow"
+        soundEnabled={true}
+      />
 
       {/* Overlay system */}
-      <OverlayManager overlays={overlays} />
+       {/* 3D Game UI Overlay */}
+       <Game3DOverlay 
+         overlays={overlays}
+         playerState={playerState}
+         xp={xp}
+         questsCompleted={questsCompleted}
+       />
 
       {/* Developer test controls */}
       <div style={{ position: "fixed", right: 12, top: 12, zIndex: 9999, background: "rgba(0,0,0,0.6)", color: "#fff", padding: 10, borderRadius: 8, width: 220, fontSize: 13 }}>

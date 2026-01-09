@@ -10,6 +10,7 @@ import * as THREE from "three";
 import CharacterController3D from "./CharacterController3D";
 import CinematicCamera3D from "./CinematicCamera3D";
 import { Physics3D } from "./Physics3D";
+import QuestWorld from "./QuestWorld";
 
 // Scene environment and world setup
 function GameEnvironment() {
@@ -121,6 +122,9 @@ export default function Game3D({
     >
       {/* Environment */}
       <GameEnvironment />
+  {/* Quest World with NPCs */}
+  <QuestWorld />
+
 
       {/* Character with advanced controller */}
       <CharacterController3D
