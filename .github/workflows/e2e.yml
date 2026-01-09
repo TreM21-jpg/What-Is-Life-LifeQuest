@@ -1,0 +1,37 @@
+name: E2E Tests
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v3
+      
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      
+      - name: Install backend dependencies
+        run: npm ci
+        working-directory: ./backend
+
+      - name: Run E2E tests against deployed API
+        run: node backend/e2e_test.js
+        env:
+          API_URL: ${{ secrets.API_URL || 'https://lifequest.fly.dev' }}
+          MONGODB_URI: ${{ secrets.MONGODB_URI }}
+
+      - name: Upload E2E results
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: e2e-results
+          path: backend/e2e_results_*.json
+          retention-days: 30
