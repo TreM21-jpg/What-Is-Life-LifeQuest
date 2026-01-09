@@ -9,9 +9,8 @@ const mongoose = require('mongoose');
 
 // Connection options
 const mongoOptions = {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-  serverSelectionTimeoutMS: 15000,  // 15 second timeout
+  // timeouts (15s) to avoid long block on startup
+  serverSelectionTimeoutMS: 15000,
   connectTimeoutMS: 15000,
   socketTimeoutMS: 15000
 };
