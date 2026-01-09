@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import OverlayManager from "./components/OverlayManager.jsx";
 import { useAmbientAudio } from "./components/useAmbientAudio";
 import GameScene from "./components/GameScene.js";
@@ -107,9 +107,20 @@ function App() {
   // Start ambient background audio via hook (previously provided by AmbientAudioProvider)
   useAmbientAudio("/audio/tranquil-bell-melodies-267092.mp3");
 
-  // === Developer / test UI state ===
+  // === Cinematic state ===
   const [showCinematic, setShowCinematic] = useState(false);
   const [currentSequence, setCurrentSequence] = useState(null);
+  const [introCompleted, setIntroCompleted] = useState(false);
+
+  // === Auto-play intro cinematic on first app load ===
+  useEffect(() => {
+    if (!introCompleted && !showCinematic) {
+      const seq = playCinematic("intro");
+      setCurrentSequence(seq);
+      setShowCinematic(true);
+      setIntroCompleted(true);
+    }
+  }, []);
 
   const API_BASE = process.env.REACT_APP_API_URL || "http://localhost:3001";
   const SESSION_ID = "dev-session-1";
