@@ -14,6 +14,7 @@
  */
 
 import React, { useState, useEffect, useRef } from "react";
+import LifeQuestLogo from "./LifeQuestLogo";
 
 export default function CinematicSequence({
   sequence,
@@ -163,14 +164,19 @@ export default function CinematicSequence({
             position: "absolute",
             inset: 0,
             display: "flex",
+            flexDirection: "column",
             alignItems: "center",
             justifyContent: "center",
             color: "#00d4ff",
             fontSize: "48px",
-            textShadow: "0 0 20px #00d4ff"
+            textShadow: "0 0 20px #00d4ff",
+            opacity: Math.max(0, 1 - Math.abs(progress - 0.5) * 2)
           }}
         >
-          {sequence.content}
+          <LifeQuestLogo size={240} color="#00d4ff" showText={true} />
+          <div style={{ marginTop: 40, opacity: Math.sin(progress * Math.PI) }}>
+            {sequence.content}
+          </div>
         </div>
       </div>
 

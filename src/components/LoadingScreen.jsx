@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import LifeQuestLogo from "./LifeQuestLogo";
 
 export default function LoadingScreen({ message = "Loading...", onFinish }) {
   const [dots, setDots] = useState("");
@@ -30,11 +31,14 @@ export default function LoadingScreen({ message = "Loading...", onFinish }) {
       fontFamily: "Orbitron, sans-serif",
       zIndex: 700
     }}>
+      <LifeQuestLogo size={180} color="#00ffff" showText={true} />
       <h1 style={{
         color: "#00ffff",
-        fontSize: "36px",
+        fontSize: "20px",
         textShadow: "0 0 15px #00ffff",
-        marginBottom: "20px"
+        marginTop: "40px",
+        marginBottom: "20px",
+        letterSpacing: 1
       }}>
         {message}{dots}
       </h1>

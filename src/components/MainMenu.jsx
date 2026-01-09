@@ -1,4 +1,5 @@
 import React from "react";
+import LifeQuestLogo from "./LifeQuestLogo";
 
 export default function MainMenu({ onStart, onCustomize, onSettings }) {
   return (
@@ -13,14 +14,7 @@ export default function MainMenu({ onStart, onCustomize, onSettings }) {
       fontFamily: "Orbitron, sans-serif",
       zIndex: 300
     }}>
-      <h1 style={{
-        color: "#00ffff",
-        fontSize: "48px",
-        marginBottom: "40px",
-        textShadow: "0 0 10px #00ffff"
-      }}>
-        LifeQuest
-      </h1>
+      <LifeQuestLogo size={200} color="#00ffff" showText={false} />
 
       <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
         <button

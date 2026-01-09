@@ -3,6 +3,7 @@ import OverlayManager from "./components/OverlayManager.jsx";
 import { useAmbientAudio } from "./components/useAmbientAudio";
 import GameScene from "./components/GameScene.js";
 import CinematicSequence from "./components/CinematicSequence.jsx";
+import LifeQuestLogo from "./components/LifeQuestLogo";
 import { playCinematic } from "./utils/cinematicSequences";
 
 function App() {
@@ -172,6 +173,33 @@ function App() {
 
   return (
     <div style={{ width: "100%", height: "100vh", background: "#000" }}>
+      {/* Branded header with logo */}
+      <div style={{
+        position: "fixed",
+        top: 0,
+        left: 0,
+        right: 0,
+        height: 80,
+        background: "linear-gradient(90deg, rgba(0, 212, 255, 0.1) 0%, rgba(0, 0, 0, 0.5) 100%)",
+        borderBottom: "2px solid rgba(0, 212, 255, 0.3)",
+        display: "flex",
+        alignItems: "center",
+        paddingLeft: 20,
+        zIndex: 999
+      }}>
+        <LifeQuestLogo size={60} color="#00d4ff" showText={false} />
+        <span style={{
+          marginLeft: 20,
+          fontSize: 28,
+          fontWeight: "bold",
+          color: "#00d4ff",
+          letterSpacing: 2,
+          textShadow: "0 0 10px rgba(0, 212, 255, 0.5)"
+        }}>
+          LIFEQUEST
+        </span>
+      </div>
+
       {/* Game world */}
       <GameScene overlays={overlays} />
 
