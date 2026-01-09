@@ -110,17 +110,14 @@ function App() {
   // === Cinematic state ===
   const [showCinematic, setShowCinematic] = useState(false);
   const [currentSequence, setCurrentSequence] = useState(null);
-  const [introCompleted, setIntroCompleted] = useState(false);
 
   // === Auto-play intro cinematic on first app load ===
   useEffect(() => {
-    if (!introCompleted && !showCinematic) {
-      const seq = playCinematic("intro");
-      setCurrentSequence(seq);
-      setShowCinematic(true);
-      setIntroCompleted(true);
-    }
-  }, []);
+    // Only play intro once on component mount
+    const seq = playCinematic("intro");
+    setCurrentSequence(seq);
+    setShowCinematic(true);
+  }, []); // Empty dependency array ensures this runs only once on mount
 
   const API_BASE = process.env.REACT_APP_API_URL || "http://localhost:3001";
   const SESSION_ID = "dev-session-1";
