@@ -8,9 +8,17 @@
 export default function LifeQuestLogo({ size = 200, color = "#333", showText = true }) {
   const width = size;
   const height = size;
+  const imagePath = "/assets/images/lifequest-logo.png"; // place the exact provided image here
 
   return (
     <div style={{ textAlign: "center" }}>
+      {/* Use exact provided raster logo if present in public/assets/images, otherwise fallback to SVG */}
+      <img
+        src={imagePath}
+        alt="LifeQuest"
+        style={{ width: width, height: height, objectFit: 'contain', display: 'block', margin: '0 auto' }}
+        onError={(e) => { e.target.style.display = 'none'; }}
+      />
       <svg
         width={width}
         height={height}

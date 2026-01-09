@@ -311,6 +311,45 @@ class BackendAPI {
   }
 
   /**
+   * QUESTS
+   */
+  async getQuests() {
+    try {
+      const data = await this.request('/api/quests');
+      return data.quests || [];
+    } catch (err) {
+      console.warn('Failed to fetch quests', err);
+      return [];
+    }
+  }
+
+  async acceptQuest(questId) {
+    try {
+      const data = await this.request('/api/quests/accept', {
+        method: 'POST',
+        body: JSON.stringify({ questId })
+      });
+      return data;
+    } catch (err) {
+      console.warn('Failed to accept quest', err);
+      throw err;
+    }
+  }
+
+  async completeQuest(questId) {
+    try {
+      const data = await this.request('/api/quests/complete', {
+        method: 'POST',
+        body: JSON.stringify({ questId })
+      });
+      return data;
+    } catch (err) {
+      console.warn('Failed to complete quest', err);
+      throw err;
+    }
+  }
+
+  /**
    * DAILIES & STREAKS
    */
 
@@ -355,6 +394,76 @@ class BackendAPI {
   /**
    * AUTHENTICATION
    */
+
+  /**
+   * Register new user
+   * @param {string} username - Username
+   * @param {string} email - Email address
+   * @param {string} password - Password
+   */
+  async register(username, email, password) {
+    try {
+      const response = await this.request("/api/auth/register", {
+        method: "POST",
+        body: JSON.stringify({ username, email, password })
+      });
+      
+      if (response.success && response.token) {
+        this.setAuthToken(response.token);
+      }
+      
+      return response;
+    } catch (error) {
+      console.error("Registration failed:", error);
+      throw error;
+    }
+  }
+
+  /**
+   * Login user
+   * @param {string} username - Username
+   * @param {string} password - Password
+   */
+  async login(username, password) {
+    try {
+      const response = await this.request("/api/auth/login", {
+        method: "POST",
+        body: JSON.stringify({ username, password })
+      });
+      
+      if (response.success && response.token) {
+        this.setAuthToken(response.token);
+      }
+      
+      return response;
+    } catch (error) {
+      console.error("Login failed:", error);
+      throw error;
+    }
+  }
+
+  /**
+   * Verify token validity
+   */
+  async verifyToken() {
+    try {
+      const response = await this.request("/api/auth/verify", {
+        method: "POST"
+      });
+      
+      return response.valid || false;
+    } catch (error) {
+      console.warn("Token verification failed");
+      return false;
+    }
+  }
+
+  /**
+   * Check if user is authenticated
+   */
+  isAuthenticated() {
+    return this.authToken !== null && this.authToken !== undefined;
+  }
 
   /**
    * Authenticate with Google OAuth token

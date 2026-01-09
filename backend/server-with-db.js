@@ -428,6 +428,8 @@ app.get('/ready', async (req, res) => {
  */
 
 app.use("/api/game", gameRoutes);
+// Quests API
+app.use('/api/quests', require('./quests'));
 
 /**
  * ============================================

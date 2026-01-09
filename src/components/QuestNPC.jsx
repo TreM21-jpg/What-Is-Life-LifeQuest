@@ -12,6 +12,7 @@
 import React, { useRef, useState } from "react";
 import { useFrame } from "@react-three/fiber";
 import { Text } from "@react-three/drei";
+import { backendAPI } from "../services/BackendAPI";
 import * as THREE from "three";
 
 export default function QuestNPC({
@@ -41,8 +42,33 @@ export default function QuestNPC({
   if (hasActiveQuest) markerColor = "#00ffff"; // Cyan = active
   if (isCompleted) markerColor = "#00ff88"; // Green = completed
 
+  const handleClick = async () => {
+    // If a prop handler exists, call it (UI-level)
+    if (onAcceptQuest) {
+      try {
+        await onAcceptQuest();
+        alert(`${name}: Quest accepted locally.`);
+      } catch (e) {
+        console.error(e);
+      }
+      return;
+    }
+
+    // Otherwise attempt to call backend API directly (requires auth token)
+    try {
+      const quests = await backendAPI.getQuests();
+      const found = quests.find(q => q.title === questTitle || q.id === questTitle || q.id === questTitle);
+      const questId = (found && found.id) || questTitle;
+      await backendAPI.acceptQuest(questId);
+      alert(`${name}: Quest accepted (server).`);
+    } catch (err) {
+      console.warn('Accept quest failed (maybe not authenticated):', err);
+      alert(`${name}: Failed to accept quest. Log in to save progress.`);
+    }
+  };
+
   return (
-    <group ref={groupRef} position={position} onClick={() => setShowDialog(true)}>
+    <group ref={groupRef} position={position} onClick={handleClick}>
       {/* NPC Body - Simple sphere */}
       <mesh
         castShadow
