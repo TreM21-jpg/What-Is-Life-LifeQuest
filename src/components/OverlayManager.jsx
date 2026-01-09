@@ -122,7 +122,7 @@ export default function OverlayManager({ overlays, autoRegion }) {
     });
 
     return () => {
-      // Cleanup listeners
+      // Cleanup listeners - clear registered keyboard listeners
       keyboardManager.disableAllListeners();
     };
   }, [phase, activeOverlay, openOverlay, closeOverlay, keyboardManager]);

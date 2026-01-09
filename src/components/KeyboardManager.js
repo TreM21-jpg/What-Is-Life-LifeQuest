@@ -133,9 +133,14 @@ export class KeyboardManager {
     this.enabled = true;
   }
 
+  disableAllListeners() {
+    this.listeners = {};
+  }
+
   destroy() {
     window.removeEventListener("keydown", (e) => this.handleKeyDown(e));
     window.removeEventListener("keyup", (e) => this.handleKeyUp(e));
+    this.listeners = {};
   }
 }
 
