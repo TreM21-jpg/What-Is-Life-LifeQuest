@@ -72,12 +72,7 @@ export default function QuestOverlay({ onClose }) {
     </div>
   );
 }
-import React, { useState } from "react";
-import NeonTheme from "./NeonTheme.js";
-import ShortcutHint from "./ShortcutHint.jsx";
-import QuoteDisplay from "./QuoteDisplay.jsx";
-import { triggerFeedback } from "./HapticAudioFeedback";
-import { recordInspiration } from "./StreakTracker.ts";
+
 
 export default function QuestOverlay({ region, onClose }) {
   const [showCompletionQuote, setShowCompletionQuote] = useState(false);
