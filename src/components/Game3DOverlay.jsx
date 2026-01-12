@@ -159,7 +159,6 @@ export default function Game3DOverlay({
       {showInventory && (
         <div
           style={{
-            <button onClick={() => setShowQuestPanel(s => !s)} style={{ padding: '8px 12px', borderRadius: 6, background: '#222', color: '#fff', border: 'none' }}>Quests</button>
             position: "fixed",
             top: 100,
             left: 20,
@@ -219,11 +218,6 @@ export default function Game3DOverlay({
           style={{
             position: "fixed",
             bottom: 100,
-          {showQuestPanel && (
-            <div style={{ position: 'absolute', bottom: 56, right: 12, width: 360, maxHeight: '50vh', overflow: 'auto', pointerEvents: 'auto', background: 'rgba(0,0,0,0.6)', padding: 12, borderRadius: 8 }}>
-              <QuestOverlay onClose={() => setShowQuestPanel(false)} />
-            </div>
-          )}
             left: 20,
             background: "rgba(0, 20, 40, 0.95)",
             border: "2px solid #ffc800",
@@ -314,6 +308,28 @@ export default function Game3DOverlay({
         <div>I - Inventory</div>
         <div>Q - Quests</div>
       </div>
+
+      {/* Quest overlay panel */}
+      {showQuestPanel && (
+        <div
+          style={{
+            position: "fixed",
+            bottom: 100,
+            right: 20,
+            width: 360,
+            maxHeight: "50vh",
+            overflow: "auto",
+            pointerEvents: "auto",
+            background: "rgba(0, 20, 40, 0.95)",
+            border: "2px solid #ffc800",
+            padding: 12,
+            borderRadius: 8,
+            zIndex: 1001,
+          }}
+        >
+          <QuestOverlay onClose={() => setShowQuestPanel(false)} />
+        </div>
+      )}
     </div>
   );
 }
