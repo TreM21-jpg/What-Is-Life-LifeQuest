@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import OverlayManager from "./components/OverlayManager.jsx";
 import { useAmbientAudio } from "./components/useAmbientAudio";
 import Game3D from "./components/Game3D";
+import Game3DOverlay from "./components/Game3DOverlay";
 import CinematicSequence from "./components/CinematicSequence.jsx";
 import LifeQuestLogo from "./components/LifeQuestLogo";
 import { playCinematic } from "./utils/cinematicSequences";
